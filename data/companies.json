@@ -1,0 +1,37 @@
+[
+    {
+        "name": "Super Esporte LTDA",
+        "cnpj": "53.722.575/6101-79",
+        "owner": "João Oliveira",
+        "ddd": 19,
+        "phone": 991232168
+    },
+    {
+        "name": "Forno e Fogão Restaurante",
+        "cnpj": "24.169.966/1667-81",
+        "owner": "Daiana Silva",
+        "ddd": 38,
+        "phone": 993245677
+    },
+    {
+        "name": "Dental Equipamentos Odontológicos",
+        "cnpj": "94.244.501/2450-03",
+        "owner": "Paula de Almeida",
+        "ddd": 92,
+        "phone": 995491089
+    },
+    {
+        "name": "Pedrinho Auto-Peças",
+        "cnpj": "29.256.287/7695-49",
+        "owner": "Pedro Gomes",
+        "ddd": 69,
+        "phone": 993687152
+    },
+    {
+        "name": "Big Box Boardgames",
+        "cnpj": "13.886.872/8154-54",
+        "owner": "Isadora Pena",
+        "ddd": 11,
+        "phone": 992255887
+    }
+]
