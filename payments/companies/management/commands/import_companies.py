@@ -4,7 +4,7 @@ from enum import Enum
 
 from django.core.management.base import BaseCommand
 
-from ...utils import CompaniesData, import_companies
+from companies.utils import CompaniesData, import_companies
 
 
 class MessageType(Enum):
@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def _write_message(
         self, message: str, message_type: MessageType = MessageType.SUCCESS,
-    ) -> None:
+    ):
         if message_type == MessageType.SUCCESS:
             self.stdout.write(self.style.SUCCESS(message))
         elif message_type == MessageType.ERROR:
@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
         return data
 
-    def _perform_insertion(self, data: CompaniesData, filepath: str) -> None:
+    def _perform_insertion(self, data: CompaniesData, filepath: str):
         error_msg = f"Error trying to import companies data from {filepath}."
         success_message = (
             f"Successfully imported companies data from {filepath}"
