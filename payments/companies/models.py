@@ -1,6 +1,11 @@
 from uuid import uuid4
 
-from django.core.validators import MaxLengthValidator, MinLengthValidator
+from django.core.validators import (
+    MaxLengthValidator,
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
+)
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -8,6 +13,8 @@ from pycpfcnpj.cpfcnpj import validate as CNPJValidator
 
 CNPJ_SIZE = 18
 DDD_SIZE = 2
+DDD_LOWER_LIMIT = 11
+DDD_UPPER_LIMIT = 99
 NAME_SIZE = 255
 OWNER_SIZE = 40
 PHONE_SIZE = 9
@@ -25,7 +32,14 @@ class Company(models.Model):
     )
     owner = models.CharField(max_length=OWNER_SIZE, blank=False, null=False)
     ddd = models.PositiveIntegerField(
-        validators=[MinLengthValidator(DDD_SIZE), MaxLengthValidator(DDD_SIZE)]
+        validators=[
+            MinLengthValidator(DDD_SIZE),
+            MaxLengthValidator(DDD_SIZE),
+            MinValueValidator(DDD_LOWER_LIMIT),
+            MaxValueValidator(DDD_UPPER_LIMIT),
+        ],
+        blank=False,
+        null=False,
     )
     phone = models.PositiveIntegerField(
         validators=[
