@@ -1,6 +1,11 @@
 from django.test import TestCase
 
-from companies.models import DDD_SIZE, PHONE_SIZE, Company
+from companies.models import (
+    DDD_LOWER_LIMIT,
+    DDD_UPPER_LIMIT,
+    PHONE_SIZE,
+    Company,
+)
 from companies.tests.factories import (
     COMPANY_TYPES,
     CompanyFactory,
@@ -42,6 +47,7 @@ class TestFactories(TestCase):
         self.assertIsInstance(company.owner, str)
         self.assertTrue(len(company.owner) > 1)
         self.assertIsInstance(company.ddd, int)
-        self.assertEqual(len(str(company.ddd)), DDD_SIZE)
+        self.assertGreaterEqual(company.ddd, DDD_LOWER_LIMIT)
+        self.assertLessEqual(company.ddd, DDD_UPPER_LIMIT)
         self.assertIsInstance(company.phone, int)
         self.assertEqual(len(str(company.phone)), PHONE_SIZE)

@@ -1,7 +1,6 @@
 from uuid import uuid4
 
 from django.core.validators import (
-    MaxLengthValidator,
     MaxValueValidator,
     MinLengthValidator,
     MinValueValidator,
@@ -9,10 +8,9 @@ from django.core.validators import (
 from django.db import models
 from django.utils.functional import cached_property
 
-from pycpfcnpj.cpfcnpj import validate as CNPJValidator
+from companies.validators import IntegerLengthValidator, cnpj_validator
 
 CNPJ_SIZE = 18
-DDD_SIZE = 2
 DDD_LOWER_LIMIT = 11
 DDD_UPPER_LIMIT = 99
 NAME_SIZE = 255
@@ -27,14 +25,12 @@ class Company(models.Model):
         max_length=CNPJ_SIZE,
         blank=False,
         null=False,
-        validators=[MinLengthValidator(CNPJ_SIZE), CNPJValidator],
+        validators=[MinLengthValidator(CNPJ_SIZE), cnpj_validator],
         unique=True,
     )
     owner = models.CharField(max_length=OWNER_SIZE, blank=False, null=False)
     ddd = models.PositiveIntegerField(
         validators=[
-            MinLengthValidator(DDD_SIZE),
-            MaxLengthValidator(DDD_SIZE),
             MinValueValidator(DDD_LOWER_LIMIT),
             MaxValueValidator(DDD_UPPER_LIMIT),
         ],
@@ -42,15 +38,16 @@ class Company(models.Model):
         null=False,
     )
     phone = models.PositiveIntegerField(
-        validators=[
-            MinLengthValidator(PHONE_SIZE),
-            MaxLengthValidator(PHONE_SIZE),
-        ]
+        validators=[IntegerLengthValidator(PHONE_SIZE, PHONE_SIZE)]
     )
 
     @cached_property
     def full_phone(self):
-        return f"{self.ddd}{self.phone}"
+        return int(f"{self.ddd}{self.phone}")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} ({self.cnpj})"

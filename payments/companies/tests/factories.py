@@ -18,7 +18,7 @@ def fake_company_name() -> str:
     name = Faker("name", locale="pt_BR").generate()
     random_type = choice(COMPANY_TYPES)
 
-    return f"{name} {choice(random_type)}"
+    return f"{name} {random_type}"
 
 
 def fake_phone_number() -> int:
