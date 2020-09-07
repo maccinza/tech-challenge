@@ -36,7 +36,7 @@ class IntegerLengthValidator(BaseValidator):
         params = {
             "lower_limit": lower_limit,
             "upper_limit": upper_limit,
-            "show_value": cleaned,
+            "show_value": len(str(cleaned)),
             "value": value,
         }
         if self.compare(cleaned, lower_limit, upper_limit):

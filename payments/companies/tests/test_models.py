@@ -129,7 +129,7 @@ class TestCompanyModel(TestCase):
         expected_messages = {
             "phone": [
                 f"Ensure the length of this value is between {PHONE_SIZE} "
-                f"and {PHONE_SIZE} (it is {company.phone})."
+                f"and {PHONE_SIZE} (it is {len(str(company.phone))})."
             ]
         }
 
@@ -144,7 +144,7 @@ class TestCompanyModel(TestCase):
         expected_messages = {
             "phone": [
                 f"Ensure the length of this value is between {PHONE_SIZE} "
-                f"and {PHONE_SIZE} (it is {company.phone})."
+                f"and {PHONE_SIZE} (it is {len(str(company.phone))})."
             ]
         }
 
