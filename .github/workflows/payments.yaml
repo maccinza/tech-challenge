@@ -1,9 +1,6 @@
 name: payments
 # This workflow is triggered on pushes to the repository.
-on:
-  push:
-    branches-ignore:
-      - master
+on: push
 
 jobs:
   build:
