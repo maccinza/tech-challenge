@@ -32,7 +32,7 @@ class Command(BaseCommand):
         data = []
         try:
             with open(filepath, "r", encoding="utf-8") as json_file:
-                data = json.loads(json_file.read())
+                data = json.load(json_file)
         except Exception as exc:
             self._write_message(
                 f"Error trying to read {filepath}. Got {str(exc)}",
