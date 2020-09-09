@@ -1,0 +1,36 @@
+name: payments
+# This workflow is triggered on pushes to the repository.
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  build:
+    name: Testing flow
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: shipay
+          POSTGRES_PASSWORD: shipay
+          POSTGRES_DB: shipay
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Perform linting tests
+        run: |
+          pre-commit run -a
+      - name: Run unit tests
+        run: |
+          python manage.py test -v 2
