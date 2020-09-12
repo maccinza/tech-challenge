@@ -1,10 +1,14 @@
 from copy import deepcopy
 
+from django.db.models import Sum
+
 from companies.models import Company
+from pycpfcnpj.cpfcnpj import validate as cnpj_is_valid
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from transactions.api.serializers import (
+    ReportSerializer,
     TransactionSerializer,
     WritableTransactionSerializer,
 )
@@ -49,3 +53,44 @@ class RecordTransactionView(CreateAPIView):
 
         kwargs.update({"company_id": company.id})
         return self.create(request, *args, **kwargs)
+
+
+class TransactionsReportView(RetrieveAPIView):
+    serializer_class = ReportSerializer
+
+    def _return_error_response(self, status, message):
+        return Response({"erro": message}, status=status)
+
+    def retrieve(self, request, *args, **kwargs):
+        company = kwargs["company"]
+        serializer = self.get_serializer(company)
+        return Response(serializer.data)
+
+    def get(self, request, *args, **kwargs):
+        http_status = status.HTTP_400_BAD_REQUEST
+        cnpj = request.GET.get("cnpj", None)
+        if not cnpj:
+            message = (
+                "O parametro obrigatorio 'cnpj' nao foi incluido "
+                "na query string"
+            )
+            return self._return_error_response(http_status, message)
+
+        elif not cnpj_is_valid(cnpj):
+            message = "Informe um 'cnpj' valido"
+            return self._return_error_response(http_status, message)
+
+        company = (
+            Company.objects.filter(cnpj=cnpj)
+            .prefetch_related("transactions")
+            .annotate(total_value=Sum("transactions__value"))
+            .first()
+        )
+
+        if not company:
+            message = f"Estabelecimento com cnpj '{cnpj}' nao encontrado"
+            http_status = status.HTTP_404_NOT_FOUND
+            return self._return_error_response(http_status, message)
+
+        kwargs.update({"company": company})
+        return self.retrieve(request, *args, **kwargs)
