@@ -21,6 +21,12 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
+      - name: Set environment variables
+        uses: allenevans/set-env@v1.0.0
+        with:
+          DB_NAME: shipay
+          DB_USER: shipay
+          DB_PASSWORD: shipay
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip

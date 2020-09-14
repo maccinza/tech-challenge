@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  backend:
+    restart: unless-stopped
+    build: .
+    entrypoint: /usr/src/app/entrypoint.sh
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env.app
+  postgres:
+    restart: unless-stopped
+    image: postgres:12.4
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    env_file:
+      - ./.env.db
+
+volumes:
+  postgres_data:
