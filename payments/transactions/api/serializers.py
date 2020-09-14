@@ -41,4 +41,5 @@ class ReportSerializer(serializers.Serializer):
         ).data
 
     def get_total(self, instance):
-        return getattr(instance, "total_value", 0.00)
+        total = getattr(instance, "total_value")
+        return total if total is not None else 0.00
