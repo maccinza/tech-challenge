@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "r1j6(+gpjd-^!c)5^y!)dihum9q+&9!do)@#7ru9^ue3=(44-k"
+SECRET_KEY = os.environ.get("SECRET_KEY", "change_me")
 
 # SECURITY WARNING: don"t run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -79,11 +79,11 @@ WSGI_APPLICATION = "payments.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("POSTGRES_DB", "shipay"),
-        "USER": os.environ.get("POSTGRES_USER", "shipay"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "shipay"),
-        "HOST": os.environ.get("POSTGRES_HOST", "127.0.0.1"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "NAME": os.environ.get("DB_NAME", "change_me"),
+        "USER": os.environ.get("DB_USER", "change_me"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "change_me"),
+        "HOST": os.environ.get("DB_HOST", "0.0.0.0"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 
