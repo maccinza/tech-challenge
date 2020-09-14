@@ -3,8 +3,10 @@ include .env.db
 export
 export DB_CONTAINER := pagamentos
 export PG_DATA_PATH := /var/lib/postgresql/data
+export WAIT_FOR_DB := 15
 
-precommit:
+precommit: precommit_install
+	. .venv/bin/activate; \
 	pre-commit run -a
 
 lint: precommit
@@ -18,6 +20,7 @@ precommit_install: .venv/
 
 install_requirements: .venv/
 	. .venv/bin/activate; \
+	pip install --upgrade pip && \
 	pip install -r requirements.txt
 
 apply_migrations:
@@ -30,17 +33,31 @@ stop_database_docker:
 
 start_database_docker: stop_database_docker
 	docker pull postgres; \
-	docker run --rm --name pagamentos -v ~/postgres_data:$(PG_DATA_PATH) -p $(DB_PORT):$(DB_PORT) -e PGDATA=$(PG_DATA_PATH)/pgdata -e POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) -e POSTGRES_DB=$(POSTGRES_DB) -e POSTGRES_USER=$(POSTGRES_USER) -d postgres
+	docker run --rm --name pagamentos -v ~/postgres_data:$(PG_DATA_PATH) -p $(DB_PORT):$(DB_PORT) -e PGDATA=$(PG_DATA_PATH)/pgdata -e POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) -e POSTGRES_DB=$(POSTGRES_DB) -e POSTGRES_USER=$(POSTGRES_USER) -d postgres; \
+	echo "Waiting 15 sec for the database to be ready..."; \
+	sleep $(WAIT_FOR_DB)
 
 import_companies: apply_migrations
 	DB_HOST=localhost && export DB_HOST; \
 	. .venv/bin/activate; \
 	python manage.py import_companies --filepath data/companies.json
 
-start_app_local:
+import_companies_dockerized:
+	docker-compose run backend python manage.py import_companies --filepath data/companies.json
+
+test:
 	$(MAKE) start_database_docker && \
-	echo "Waiting 15sec for the database to be ready..."
-	sleep 15 && \
+	$(MAKE) apply_migrations && \
+	DB_HOST=localhost && export DB_HOST; \
+	. .venv/bin/activate; \
+	python manage.py test -v 2
+
+test_dockerized:
+	docker-compose run backend python manage.py test -v 2
+
+start_app_local:
+	$(MAKE) install_requirements && \
+	$(MAKE) start_database_docker && \
 	$(MAKE) import_companies && \
 	DB_HOST=localhost && export DB_HOST; \
 	. .venv/bin/activate; \
