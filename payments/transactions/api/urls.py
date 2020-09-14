@@ -9,6 +9,10 @@ from transactions.apps import TransactionsConfig
 app_name = TransactionsConfig.name
 
 urlpatterns = [
-    path("transacao", RecordTransactionView.as_view()),
-    path("transacoes/estabelecimento", TransactionsReportView.as_view()),
+    path("transacao", RecordTransactionView.as_view(), name="transaction"),
+    path(
+        "transacoes/estabelecimento",
+        TransactionsReportView.as_view(),
+        name="report",
+    ),
 ]

@@ -31,9 +31,7 @@ class RecordTransactionView(CreateAPIView):
         try:
             self.perform_create(serializer)
         except Exception:
-            return self._return_error_response(
-                status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return self._return_error_response(status.HTTP_400_BAD_REQUEST)
 
         headers = self.get_success_headers(serializer.data)
         return Response(
